@@ -1,9 +1,9 @@
 class ULA:
 
     def __init__(self):
-        # Entrada: Nada
-        # Operacao: Inicia o objeto da ULA com campos zerados
-        # Saida: Objeto da ULA
+        """ Entrada: Nada
+            Operacao: Inicia o objeto da ULA com campos zerados, Construtor
+            Saida: Objeto da ULA """
 
         self.a = 0
         self.b = 0
@@ -11,18 +11,18 @@ class ULA:
         self.result = 0
     
 
-    def setInstruction(self, inst):
-        # Entrada: inst: Inteiro => Instrucao a ser executada pela ULA
-        # Operacao: Atribui ao campo de instrucao da ula a sua nova instrucao passada como parametro
-        # Saida: Nada
+    def set_instruction(self, inst):
+        """ Entrada: inst: Inteiro => Instrucao a ser executada pela ULA
+            Operacao: Atribui ao campo de instrucao da ula a sua nova instrucao passada como parametro
+            Saida: Nada """
         
         self.inst = inst
     
 
-    def setInputs(self):
-        # Entrada: Nada
-        # Operacao: Chama as funcoes de acesso ao registrador e atribui aos campos a e b da ULA
-        # Saida: Nada 
+    def set_inputs(self):
+        """ Entrada: Nada
+            Operacao: Chama as funcoes de acesso ao registrador e atribui aos campos a e b da ULA
+            Saida: Nada """ 
         
 
         # Essa funcao depois ira acessar o valor dos registradores
@@ -30,10 +30,10 @@ class ULA:
         self.b = 10 # Recebe o valor de um registrador baseado no B
     
 
-    def executeInstruction(self):
-        # Entrada: Nada
-        # Operacao: Executa a instrucao passada para a ula atraves de setInstruction
-        # Saida: Resultado da operacao executada pela ula 
+    def execute_instruction(self):
+        """ Entrada: Nada
+            Operacao: Executa a instrucao passada para a ula atraves de setInstruction
+            Saida: Resultado da operacao executada pela ula """
         
         # Todas as istrucoes da ULA
         instructions = [24, 20, 26, 44, 60, 61, 57, 53, 63, 54, 59, 12, 28, 16, 49, 50]
