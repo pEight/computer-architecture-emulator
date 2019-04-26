@@ -1,14 +1,26 @@
 # Arquivo principal
 # Responsável por chamar todas as outras funcoes e dar inicio ao programa
 
-
+from Reg import Reg
 
 
 def main():
+    reg = Reg()
+    
+    reg.set_register("pc", 1042)
+    print(reg.get_register("pc"))
+
     print("Hello World!")    
     memory = assign_memory();
-    print(memory[0])
-    print(memory[511])
+
+    # Variavel que guarda o indice da instrucao atual a ser executada    
+    current_position = 0
+    
+    while True:
+        # current_inst = Instruction(memory[current_position])
+        print(pc)
+        pc = pc + 1
+        wait_for_clock()
 
 
 def assign_memory():
@@ -30,8 +42,7 @@ def wait_for_clock():
         Operacao: Pausa o programa ate que a tecla enter seja pressionada,
               utilizada para separar os ciclos do clock durante a execucao das instrucoes
         Saida: Nada """
-        
-    input("")
 
+    input("")
 
 main()
