@@ -5,22 +5,12 @@ from Reg import Reg
 
 
 def main():
-    reg = Reg()
+    registers = Reg()
     
-    reg.set_register("pc", 1042)
-    print(reg.get_register("pc"))
-
     print("Hello World!")    
-    memory = assign_memory();
-
-    # Variavel que guarda o indice da instrucao atual a ser executada    
-    current_position = 0
     
     while True:
-        # current_inst = Instruction(memory[current_position])
-        print(pc)
-        pc = pc + 1
-        wait_for_clock()
+        
 
 
 def assign_memory():

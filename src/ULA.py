@@ -36,7 +36,7 @@ class ULA:
             Saida: Resultado da operacao executada pela ula """
         
         # Todas as istrucoes da ULA
-        instructions = [24, 20, 26, 44, 60, 61, 57, 53, 63, 54, 59, 12, 28, 16, 49, 50]
+        instructions = ["011000", "010100", "011010", "101100", "111100", "111101", "111001", "110101", "111111", "110110", "111011", "001100", "011100", "010000", "110001","110010"]
         # Os resultados relacionados a cada instrucao 
         results = [self.a, self.b, ~ self.a, ~ self.b, self.a + self.b, self.a + self.b + 1, self.a + 1, self.b + 1, self.b - self.a, self.b - 1, -1*self.a, self.a & self.b, self.a | self.b , 0, 1, -1 ]
 
