@@ -2,30 +2,49 @@
 # Responsável por chamar todas as outras funcoes e dar inicio ao programa
 
 from Reg import Reg
-
+from ULA import ULA
 
 def main():
+
     registers = Reg()
     
-    print("Hello World!")    
-    
+    ula = ULA()
+    Zero = True
+    NonZero = False
+
     while True:
+
+        ####################################### PARTE 1: Decodificar #####################################
+
+        ####################################### PARTE 2: Barramentos #####################################
+
+        ####################################### PARTE 3: ULA #############################################
+
+        # Recebe registrador que será adicionado ao b TEMPORARIO SERA FEITO NA PARTE 2
+        b = "pc"
+        ula.set_inputs(registers.get_register("h"), registers.get_register(b))
+
+        # Recebe instrucao da ula TEMPORARIO SERA FEITO NA PARTE 1
+        instrucao = "10111100"
+        ula.set_instruction(instrucao)
+
+        ula.execute_instruction()
+
+        if(ula.is_zero()): Zero = True
+        if(not ula.is_zero()): Zero = False
+        NonZero = not Zero
+
+        ####################################### PARTE 4: Registradores ####################################
+
+        # Recebe registrador para ser gravado, sendo ele representado pelos bits C
+        C = "000000100"
+        registers.set_register(C.index(1), ula.get_result())
+        
+        ####################################### PARTE 5: Memoria ##########################################
         
 
-
-def assign_memory():
-    """ Entrada: Nada
-        Operacao: Cria o vetor da memoria e preenche suas posicoes com instrucoes
-        Saida: Lista com as 512 posicoes de memoria inicializadas """
-
-    memory = []
-
-    #Trocar pela leitura do arquivo e iretacao das instrucoes
-    for i in range(0, 512):
-        memory.append("000000000000000000000000000000000000")
-
-    return memory
-
+        ####################################### PARTE 6: Jumps ############################################
+        
 
 def wait_for_clock():
     """ Entrada: Nada

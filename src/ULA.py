@@ -12,14 +12,18 @@ class ULA:
     
 
     def set_instruction(self, inst):
-        """ Entrada: inst: Inteiro => Instrucao a ser executada pela ULA
+        """ Entrada: inst: String => Instrucao a ser executada pela ULA
             Operacao: Atribui ao campo de instrucao da ula a sua nova instrucao passada como parametro
+                      Realiza a separacao da instrucao e dos bits de deslocamento
             Saida: Nada """
         
-        self.inst = inst
+        self.shift = inst[:2]
+        self.inst = inst[2:]
+
+        
     
 
-    def set_inputs(self):
+    def set_inputs(self, a, b):
         """ Entrada: Nada
             Operacao: Chama as funcoes de acesso ao registrador e atribui aos campos a e b da ULA
             Saida: Nada """ 
@@ -42,4 +46,25 @@ class ULA:
 
         self.result = results[ instructions.index(self.inst) ]
 
+        return self.result
+
+    def execute_shift(self):
+        """ Entrada: Nada
+            Operacao: Executa os deslocamentos para da direita ou esquerda se necessário
+            Saida: Resultado da operacao executada pela ula após o deslocamento """
+        if(self.shift == "01"):
+            self.result = self.result >> 1
+        if(self.shift == "10"):
+            self.result = self.result << 8
+
+    def is_zero(self):
+        """ Entrada: Nada
+            Operacao: Verifica se a ula tem resultado zero
+            Saida: Boolean: True se a ula tiver valor zero, falso se tiver valor diferente de zero """
+        return self.result == 0
+
+    def get_result(self):
+        """ Entrada: Nada
+            Operacao: Retorna o resultado da ula
+            Saida: Int: Resultado da ula """
         return self.result

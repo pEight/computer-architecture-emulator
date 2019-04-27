@@ -4,7 +4,7 @@ class Reg:
         """ Entrada: Nada
             Operacao: Inicia o objeto dos Registradores com todos os campos zerados, Construtor
             Saida: Objeto dos Registradores """
-        #                 mar | mdr | pc | mbr | sp | lv | cpp | tos | opc | h
+        #                  h |  opc | tos | cpp | lv | sp | pc | mdr | mar | mbr
         self.registers = [ 0  ,  0  ,  0 ,  0  , 0  ,  0 ,  0  ,  0  ,  0  , 0]
     
 
