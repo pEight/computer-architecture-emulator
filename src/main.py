@@ -1,43 +1,57 @@
-import os
-from instruction import Instruction
-from control_storage import Control_Storage
+# Arquivo principal
+# Responsável por chamar todas as outras funcoes e dar inicio ao programa
 
-bin_path = 'bin/microprog.rom'
+from Reg import Reg
+from ULA import ULA
 
-def get_binary_content(filename, chunksize):
-  with open(filename, mode='rb') as f:
-    byte = f.read(chunksize)
+def main():
 
-    if byte:
-      return byte
+    registers = Reg()
     
-    return None
+    ula = ULA()
+    Zero = True
+    NonZero = False
 
-file_size = os.path.getsize(bin_path)
-bytes_instruction = get_binary_content(bin_path, file_size)
+    while True:
 
-mem_test = Control_Storage(bytes_instruction, file_size)
+        ####################################### PARTE 1: Decodificar #####################################
 
-# print(mem_test.get_mem_of_instructions())
-# print(mem_test.get_mem_of_str())
-# print(mem_test.get_mem_of_arr())
+        ####################################### PARTE 2: Barramentos #####################################
 
-mem_test = mem_test.get_mem_of_instructions()
+        ####################################### PARTE 3: ULA #############################################
 
-inst = mem_test[0]
+        # Recebe registrador que será adicionado ao b TEMPORARIO SERA FEITO NA PARTE 2
+        b = "pc"
+        ula.set_inputs(registers.get_register("h"), registers.get_register(b))
 
-print(f'Instruction string: {inst.get_str_instruction()}')
-print(f'Instruction Arr: {inst.get_arr_instruction()}')
-print(f'Bus B: {inst.get_bus_b_bin()}')
-print(f'Memória: {inst.get_memory_bin()}')
-print(f'Bus C: {inst.get_bus_c_bin()}')
-print(f'ULA: {inst.get_ula_bin()}')
-print(f'JAM: {inst.get_jam_bin()}')
-print(f'Next Address: {inst.get_next_address_bin()}')
+        # Recebe instrucao da ula TEMPORARIO SERA FEITO NA PARTE 1
+        instrucao = "10111100"
+        ula.set_instruction(instrucao)
 
+        ula.execute_instruction()
 
-# INIC        || CPP         || LV          || PC 
-# 00 73 00 00 || 06 00 00 00 || 01 10 00 00 || 00 04 00 00
-# constante na inicialização
-# apenas muda o topo da pilha
+        if(ula.is_zero()): Zero = True
+        if(not ula.is_zero()): Zero = False
+        NonZero = not Zero
 
+        ####################################### PARTE 4: Registradores ####################################
+
+        # Recebe registrador para ser gravado, sendo ele representado pelos bits C
+        C = "000000100"
+        registers.set_register(C.index(1), ula.get_result())
+        
+        ####################################### PARTE 5: Memoria ##########################################
+        
+
+        ####################################### PARTE 6: Jumps ############################################
+        
+
+def wait_for_clock():
+    """ Entrada: Nada
+        Operacao: Pausa o programa ate que a tecla enter seja pressionada,
+              utilizada para separar os ciclos do clock durante a execucao das instrucoes
+        Saida: Nada """
+
+    input("")
+
+main()
