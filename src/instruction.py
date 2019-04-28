@@ -3,8 +3,6 @@ from binary import convert_to_bin
 """Uma classe que representa uma instrução de 8 bytes(64 bits) MIC-1"""
 
 class Instruction:
-
-
   def __init__(self, instruction_byte):
     """Inicializa atributos da instrução MIC-1
     
