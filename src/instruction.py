@@ -68,3 +68,15 @@ class Instruction:
   def get_next_address_bin(self):
     """Retorna a parte da instrução correspondente ao próximo endereço"""
     return self.instruction_str[27:36]
+
+  def get_inst_dict(self):
+    """Retorna um Dictionary com barramento b, memória, barramento c,
+    ULA e próximo endereço"""
+    return {
+      'bus_b': self.get_bus_b_bin(),
+      'memory': self.get_memory_bin(),
+      'bus_c': self.get_bus_c_bin(),
+      'ula': self.get_ula_bin(),
+      'jam': self.get_jam_bin(),
+      'next_address': self.get_next_address_bin()
+    }
