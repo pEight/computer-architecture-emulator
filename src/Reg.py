@@ -18,6 +18,7 @@ class Reg:
             return self.registers[register]
 
         if(type(register) is str):
+            if(register == "none"): return 0
             reg_names = ["h", "opc", "tos", "cpp" , "lv", "sp" , "pc", "mdr", "mar", "mbr"]
             return self.registers[reg_names.index(register)]
 
@@ -61,6 +62,7 @@ class Reg:
 
         # inv_reg = register[::-1]
         
+        if register == "0000": return 'none'
         index = register.index('1')
         reg_names = ["h", "opc", "tos", "cpp" , "lv", "sp" , "pc", "mdr", "mar", "mbr"]
         return reg_names[index]

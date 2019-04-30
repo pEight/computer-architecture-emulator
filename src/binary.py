@@ -23,3 +23,14 @@ def convert_to_bin(int_value):
     "bin_arr": bin_arr[::-1],
     "bin_str": "".join(map(str, bin_arr[::-1])) 
   }
+
+def convert_to_decimal(bin_value):
+  result = 0
+  i = 0
+
+  for v in bin_value:
+    print(result)
+    result += int(v)*(2**i)
+    i+=1
+
+  return result
