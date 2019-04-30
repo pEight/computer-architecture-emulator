@@ -70,10 +70,7 @@ def main():
     ####################################### PARTE 6: Jumps ############################################
 
 		####################################### PARTE 7: NEXT ADDRESS #####################################
-    # convert_to_decimal(inst_part['next_address'])
-    mem_pos	+= 1
-    print(inst_part['next_address'])	
-    print(mem_pos)
+    mem_pos	+= convert_to_decimal(inst_part['next_address'])
 
 def wait_for_clock():
   """ Entrada: Nada
