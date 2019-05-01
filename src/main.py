@@ -41,12 +41,11 @@ def main():
     inst_part = inst.get_inst_dict()
     
     ####################################### PARTE 2: Barramentos #####################################
-    b = registers.get_register_name(inst_part['bus_b'])
+    b = registers.get_register_b(inst_part['bus_b'])
 
     ####################################### PARTE 3: ULA #############################################
 
-    # Recebe registrador que será adicionado ao b TEMPORARIO SERA FEITO NA PARTE 2
-    ula.set_inputs(registers.get_register("h"), registers.get_register(b))
+    ula.set_inputs(registers.get_register("h"), b)
 
     # Recebe instrucao da ula TEMPORARIO SERA FEITO NA PARTE 1
     instrucao = "10111100"
@@ -70,10 +69,7 @@ def main():
     ####################################### PARTE 6: Jumps ############################################
 
 		####################################### PARTE 7: NEXT ADDRESS #####################################
-    # convert_to_decimal(inst_part['next_address'])
-    mem_pos	+= 1
-    print(inst_part['next_address'])	
-    print(mem_pos)
+    mem_pos	+= convert_to_decimal(inst_part['next_address'])
 
 def wait_for_clock():
   """ Entrada: Nada

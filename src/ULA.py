@@ -20,18 +20,15 @@ class ULA:
         self.shift = inst[:2]
         self.inst = inst[2:]
 
-        
-    
 
     def set_inputs(self, a, b):
-        """ Entrada: Nada
-            Operacao: Chama as funcoes de acesso ao registrador e atribui aos campos a e b da ULA
+        
+        """ Entrada: a , b: Inteiros => Valores dos registradores H e B
+            Operacao: Atribui aos campos a e b da ULA os valores recebidos
             Saida: Nada """ 
         
-
-        # Essa funcao depois ira acessar o valor dos registradores
-        self.a = 12 # Receber o valor do registrador h
-        self.b = 10 # Recebe o valor de um registrador baseado no B
+        self.a = a # Receber o valor do registrador h
+        self.b = b # Recebe o valor de um registrador baseado no B
     
 
     def execute_instruction(self):
