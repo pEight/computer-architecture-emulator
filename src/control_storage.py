@@ -37,10 +37,10 @@ class Control_Storage:
     instruction_map = map(define_str_instructions, self._get_cs_of_instructions())
     return list(instruction_map)
 
-  def _get_cs_of_arr(self):
-    """Retorna uma lista de lista de instruções"""
-    def define_arr_instruction(elem):
-      return elem.get_arr_instruction()
-    
-    instruction_map = map(define_arr_instruction, self._get_cs_of_instructions())
-    return list(instruction_map)
+    def _get_cs_of_arr(self):
+      """Retorna uma lista de lista de instruções"""
+      def define_arr_instruction(elem):
+        return elem.get_arr_instruction()
+
+      instruction_map = map(define_arr_instruction, self._get_cs_of_instructions())
+      return list(instruction_map)
