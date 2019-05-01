@@ -10,7 +10,6 @@ from binary import convert_to_decimal
 from control_storage import Control_Storage
 from instruction import Instruction
 
-
 def main():
   # Variáveis de Registradores
   registers = Reg()
@@ -64,6 +63,8 @@ def main():
 
       ####################################### PARTE 7: NEXT ADDRESS #####################################
     cs_pos = convert_to_decimal(instruction_part["next_address"])
+    print(f"Instrução: {instruction.get_str_instruction()}")
+    print(f"Partes: {instruction_part}")
 
 
 def wait_for_clock():
