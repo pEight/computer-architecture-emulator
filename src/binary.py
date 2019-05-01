@@ -29,7 +29,6 @@ def convert_to_decimal(bin_value):
   i = 0
 
   for v in bin_value:
-    print(result)
     result += int(v)*(2**i)
     i+=1
 
