@@ -7,7 +7,7 @@ from Reg import Reg
 from ULA import ULA
 
 from reader import get_file_content
-from binary import convert_to_bin
+from binary import convert_to_decimal
 from control_storage import Control_Storage
 from instruction import Instruction
 
@@ -42,7 +42,6 @@ def main():
     
     ####################################### PARTE 2: Barramentos #####################################
     b = registers.get_register_name(inst_part['bus_b'])
-    print(b)
 
     ####################################### PARTE 3: ULA #############################################
 
@@ -63,13 +62,18 @@ def main():
 
     # Recebe registrador para ser gravado, sendo ele representado pelos bits C
     C = "000000100"
-    registers.set_register(C.index('1'), ula.get_result())
+    for i in range(0, len(C)):
+      registers.set_register(i, ula.get_result())
         
     ####################################### PARTE 5: Memoria ##########################################
-        
 
     ####################################### PARTE 6: Jumps ############################################
-        
+
+		####################################### PARTE 7: NEXT ADDRESS #####################################
+    # convert_to_decimal(inst_part['next_address'])
+    mem_pos	+= 1
+    print(inst_part['next_address'])	
+    print(mem_pos)
 
 def wait_for_clock():
   """ Entrada: Nada
