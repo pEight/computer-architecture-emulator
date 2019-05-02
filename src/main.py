@@ -1,15 +1,16 @@
-# Arquivo principal
-# Responsável por chamar todas as outras funcoes e dar inicio ao programa
-
+# Importar implementações do python
 import sys
 
+# Importar classes de módulos do projeto
 from Reg import Reg
 from ULA import ULA
-
-from binary import convert_to_decimal
 from control_storage import Control_Storage
 from instruction import Instruction
 
+# Importar funções de módulos do projeto
+from binary import convert_to_decimal
+
+"""Função responsável por chamar todas as outras funções e dar inicio ao programa"""
 def main():
   # Variáveis de Registradores
   registers = Reg()
@@ -61,7 +62,7 @@ def main():
 
     ####################################### PARTE 6: Jumps ############################################
 
-      ####################################### PARTE 7: NEXT ADDRESS #####################################
+    ####################################### PARTE 7: NEXT ADDRESS #####################################
     cs_pos = convert_to_decimal(instruction_part["next_address"])
     print(f"Instrução: {instruction.get_str_instruction()}")
     print(f"Partes: {instruction_part}")
@@ -74,6 +75,5 @@ def wait_for_clock():
       Saida: Nada """
 
   input("")
-
 
 main()
