@@ -19,27 +19,24 @@ class Main_Memory:
 
 	# Criado para teste. Remover depois		
 	def get_memory_int(self):
-		def convert_to_int(elem):
-			return int.from_bytes(elem, byteorder="little")
-
-		dictionary = map(convert_to_int, self._memory)
-		return list(dictionary)
+		mem = self._memory
+		return list(
+			map(lambda elem: int.from_bytes(elem, "little"), mem)
+		)
 	
 	# Criado para teste. Remover depois	
 	def get_memory_str(self):
-		def convert_to_str(elem):
-			return convert_to_bin(elem)["bin_str"]
-
-		dictionary = map(convert_to_str, self.get_memory_int())
-		return list(dictionary)
+		int_list = self.get_memory_int()
+		return list(
+			map(lambda elem: convert_to_bin(elem)["bin_str"], int_list)
+		)
 
 	# Criado para teste. Remover depois	
 	def get_memory_arr(self):
-		def convert_to_arr(elem):
-			return convert_to_bin(elem)["bin_arr"]
-
-		dictionary = map(convert_to_arr, self.get_memory_int())
-		return list(dictionary)
+		int_list = self.get_memory_int()
+		return list(
+			map(lambda elem: convert_to_bin(elem)["bin_arr"], int_list)
+		)
 
 	def load_memory(self, file_path):
 		"""Ler uma informação e escrever na memória partindo da posição 1.
@@ -117,8 +114,6 @@ class Main_Memory:
 			result = value
 		else:
 			result = value.to_bytes(value.bit_length(), "little")
-
-		print(result)
 		
 		result_size = len(result)
 
@@ -139,19 +134,3 @@ class Main_Memory:
 		"""
 		return self.read_memory(position)
 
-# mem = Main_Memory(512)
-
-# print(mem.load_memory("bin/prog.exe"))
-
-# wasWritten = mem.write_memory(b"\x0A\x0B", 4)
-# print(f"Esceveu na memória? {wasWritten}")
-# print(f"Valor lido: {mem.read_memory(4, 2)}")
-
-# print(f"Tamanho: {len(mem.get_memory())}")
-# print(f"Memoria: {mem.get_memory()}")
-
-# print(f"Tamanho str: {len(mem.get_memory_str())}")
-# print(f"Memoria str: {mem.get_memory_str()}")
-
-# print(f"Tamanho arr: {len(mem.get_memory_str())}")
-# print(f"Memoria arr: {mem.get_memory_str()}")

@@ -1,17 +1,23 @@
 # Importar implementações do python
 import sys
+import time
+import os
 
 # Importar classes de módulos do projeto
 from Reg import Reg
 from ULA import ULA
 from control_storage import Control_Storage
 from instruction import Instruction
+from main_memory import Main_Memory
 
 # Importar funções de módulos do projeto
 from binary import convert_to_decimal
 
 """Função responsável por chamar todas as outras funções e dar inicio ao programa"""
 def main():
+  # Recebe o nome do arquivo que deve ser carregado na memória principal
+  file_path = sys.argv[1]
+
   # Variáveis de Registradores
   registers = Reg()
 
@@ -22,18 +28,39 @@ def main():
 
   # Variáveis de armazenamento de controle
   cs = Control_Storage()
-  cs_pos = 0
-  instruction_part = None
+  instruction = None
+
+  # Variáveis da Memória principal
+  memory = Main_Memory(512)
+  instruction = None
+
+  # Carrega arquivo na memória principal
+  if (memory.load_memory(file_path)):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("\t\t\t\tArquivo carregando na memória.")
+    time.sleep(1)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("\t\t\t\tArquivo carregando na memória..")
+    time.sleep(1)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("\t\t\t\tArquivo carregando na memória...")
+    time.sleep(1)
+    os.system('cls' if os.name == 'nt' else 'clear')
 
   while True:
     wait_for_clock()
 
     ####################################### PARTE 1: Decodificar #####################################
-    instruction = cs.get_cs_value(cs_pos)
-    instruction_part = instruction.get_inst_dict()
+    
+
+      # Define a primeira instrução do microprograma a ser executada
+    instruction = cs.get_readable_instruction()
+    instruction_str_test = cs.get_readable_instruction("string")  # teste
+    print(f"Instrução: {instruction_str_test}")  # teste
+    print(f"Partes: {instruction}") # teste
 
     ####################################### PARTE 2: Barramentos #####################################
-    b = registers.get_register_b(instruction_part['bus_b'])
+    b = registers.get_register_b(instruction['bus_b'])
 
     ####################################### PARTE 3: ULA #############################################
 
@@ -63,9 +90,8 @@ def main():
     ####################################### PARTE 6: Jumps ############################################
 
     ####################################### PARTE 7: NEXT ADDRESS #####################################
-    cs_pos = convert_to_decimal(instruction_part["next_address"])
-    print(f"Instrução: {instruction.get_str_instruction()}")
-    print(f"Partes: {instruction_part}")
+      # Vai para a próxima instrução
+    cs.next()
 
 
 def wait_for_clock():
