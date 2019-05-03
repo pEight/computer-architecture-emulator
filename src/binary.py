@@ -1,4 +1,3 @@
-"""Uma função que converte um decimal para binário"""
 def convert_to_bin(int_value):
   """Retorna um Dictionary contendo uma propriedade cujo o valor é uma
   lista de 0's e 1's e a outra propriedade é uma string de 0's e 1's
@@ -23,12 +22,19 @@ def convert_to_bin(int_value):
       "bin_str": "".join(map(str, bin_arr[::-1]))
   }
 
+
 def convert_to_decimal(bin_value):
-  result = 0
-  i = 0
+	"""Recebe uma string de 0s e 1s e converte o binário para inteiro.
+	Retorna o inteiro correspondente ao valor binário em string
 
-  for v in bin_value:
-    result += int(v)*(2**i)
-    i += 1
+	Keyword arguments:
+	bin_value -- Uma string de 0s e 1s
+	"""
+	result = 0
+	i = 0
 
-  return result
+	for v in bin_value:
+		result += int(v)*(2**i)
+		i += 1
+
+	return result
