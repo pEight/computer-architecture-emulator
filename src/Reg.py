@@ -2,95 +2,93 @@ from binary import convert_to_decimal
 
 class Reg:
 
-    def __init__(self):
-        """ Entrada: Nada
-            Operacao: Inicia o objeto dos Registradores com todos os campos zerados, Construtor
-            Saida: Objeto dos Registradores """
-        #
-        
-        self.dict = {
-            "h" : 0,
-            "opc" : 0,
-            "tos" : 0,
-            "cpp" : 0,
-            "lv" : 0,
-            "sp" : 0,
-            "pc" : 0,
-            "mdr" : 0,
-            "mar" : 0,
-            "mbr" : 0
-        }
+  def __init__(self):
+    """ Entrada: Nada
+        Operacao: Inicia o objeto dos Registradores com todos os campos zerados, Construtor
+        Saida: Objeto dos Registradores """
 
-    def get_register(self, register):
-        """ Entrada: register: String => Registrador a ser acessado
-            Operacao: Acessa o registrador especificado
-            Saida: Valor do registrador especificado: Inteiro """
+    self.dict = {
+      "h": 0,
+      "opc": 0,
+      "tos": 0,
+      "cpp": 0,
+      "lv": 0,
+      "sp": 0,
+      "pc": 0,
+      "mdr": 0,
+      "mar": 0,
+      "mbr": 0
+    }
 
-        if(register == "none"): return 0
-        
-        return self.dict[register]
+  def get_register(self, register):
+    """ Entrada: register: String => Registrador a ser acessado
+        Operacao: Acessa o registrador especificado
+        Saida: Valor do registrador especificado: Inteiro """
 
-    def set_register(self, register, value):
-        """ Entrada: register: String => Registrador a ser editado
-                     value: Inteiro => Valor a ser atribuido ao registrador
-            Operacao: Altera o valor do registrador especificado
-            Saida: Nada """
+    if(register == "none"): return 0
 
-        
-        self.dict[register] = value
+    return self.dict[register]
 
-    def get_register_bin(self, register):
-        """ Entrada: register: String => Parte binaria da instrucao em string
-            Operacao: Retorna o regitrados especificado
-            Saida: O valor registrador especificado """
+  def set_register(self, register, value):
+    """ Entrada: register: String => Registrador a ser editado
+                 value: Inteiro => Valor a ser atribuido ao registrador
+        Operacao: Altera o valor do registrador especificado
+        Saida: Nada """
 
-        # inv_reg = register[::-1]
-        index = register.index('1')
+    self.dict[register] = value
 
-        names_array = self.dict.keys()
+  def get_register_bin(self, register):
+    """ Entrada: register: String => Parte binaria da instrucao em string
+        Operacao: Retorna o regitrados especificado
+        Saida: O valor registrador especificado """
 
-        return self.dict[ names_array[index] ]
+    # inv_reg = register[::-1]
+    index = register.index('1')
 
-    def set_register_bin(self, register, value):
-        """ Entrada: register: String => Parte binaria da instrucao em string
-                     value: Int => Valor a ser atribuido ao registrador
-            Operacao: Altera o valor do registrador especificado
-            Saida: Nada """
+    names_array = self.dict.keys()
 
-        # inv_reg = register[::-1]
-        index = register.index('1')
+    return self.dict[names_array[index]]
 
-        names_array = self.dict.keys()
+  def set_register_bin(self, register, value):
+    """ Entrada: register: String => Parte binaria da instrucao em string
+                 value: Int => Valor a ser atribuido ao registrador
+        Operacao: Altera o valor do registrador especificado
+        Saida: Nada """
 
-        self.dict[ names_array[index] ] = value
+    # inv_reg = register[::-1]
+    index = register.index('1')
 
-    def get_register_name(self, register):
-        """ Entrada: register: String => Parte binaria da instrucao em string
-            Operacao: Retorna o nome do regitrados especificado
-            Saida: O valor registrador especificado """
+    names_array = self.dict.keys()
 
-        index = convert_to_decimal(register)
+    self.dict[names_array[index]] = value
 
-        reg_names = ["none","h", "opc", "tos", "cpp" , "lv", "sp" , "pc", "mdr", "mar", "mbr"]
-        
-        return reg_names[index]
+  def get_register_name(self, register):
+    """ Entrada: register: String => Parte binaria da instrucao em string
+        Operacao: Retorna o nome do regitrados especificado
+        Saida: O valor registrador especificado """
 
-    def get_register_b(self, register):
-        """ Entrada: register: String => Parte binaria que representa qual sera o barramento b
-            Operacao: Retorna o nome do regitrador especificado
-            Saida: O nome do registrador especificado """
+    index = convert_to_decimal(register)
 
-        # Pelo que vi, a string não está adequada para ser convertida desse modo
-        # Portanto ela precisa ser invertida
-        inv_reg = register[::-1]
+    reg_names = ["none", "h", "opc", "tos", "cpp", "lv", "sp", "pc", "mdr", "mar", "mbr"]
 
-        intRegister = convert_to_decimal(inv_reg)
+    return reg_names[index]
 
-        reg_names_for_b = ["mdr","pc","mbr","mbr","sp","lv","cpp","tos", "opc"]
- 
-        reg_value = self.dict[ reg_names_for_b[intRegister] ]
+  def get_register_b(self, register):
+    """ Entrada: register: String => Parte binaria que representa qual sera o barramento b
+        Operacao: Retorna o nome do regitrador especificado
+        Saida: O nome do registrador especificado """
 
-        if(intRegister == 2 and reg_value & (0b10000000)):
-				reg_value = reg_value | (0b111111111111111111111111 << 8)
-        
-        return reg_value
+    # Pelo que vi, a string não está adequada para ser convertida desse modo
+    # Portanto ela precisa ser invertida
+    inv_reg = register[::-1]
+
+    intRegister = convert_to_decimal(inv_reg)
+
+    reg_names_for_b = ["mdr", "pc", "mbr", "mbr", "sp", "lv", "cpp", "tos", "opc"]
+
+    reg_value = self.dict[reg_names_for_b[intRegister]]
+
+    if(intRegister == 2 and reg_value & (0b10000000)):
+      reg_value = reg_value | (0b111111111111111111111111 << 8)
+
+    return reg_value

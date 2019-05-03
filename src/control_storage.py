@@ -1,42 +1,62 @@
 from instruction import Instruction
+from reader import get_file_content
+from binary import convert_to_decimal
 
 """Uma classe que representa o Armazenamento de Controle de 512 bytes"""
 class Control_Storage:
-  def __init__(self, bytes_instruction, file_size=512):
-    """Inicializa um objeto Armazenamento de Controle
-    
-    Keyword arguments:
-    bytes_instruction -- instruções MIC-1 em bytes
-    file_size -- tamanho do arquivo de instruções MIC-1
-    """
-    self.mem = [bytes_instruction[i:i+8] for i in range(0, file_size, 8)]
+	def __init__(self):
+		"""Inicializa um objeto Armazenamento de Controle"""
+		# Ler microprog.rom
+		file_content = get_file_content("bin/microprog.rom")
 
-  def get_mem_of_bytes(self):
-    """Retorna uma lista de instruções(64 bits) MIC-1 em bytes"""
-    return self.mem
+		self._cs_bytes = [
+			file_content["bytes"][i:i+8] for i in range(0, file_content["size"], 8)
+		]
+		self._cs_pos = 0
+		self._instruction = Instruction(self._cs_bytes[self._cs_pos])
 
-  def get_mem_of_instructions(self):
-    """Retorna uma lista de objetos Instruction"""
-    def define_instructions(elem):
-      return Instruction(elem)
+	def get_readable_instruction(self, instruction_type="dictionary"):
+		"""Retorna uma instrução de uma legível para um estudante de arquitetura
+		de computadores.
+		
+		Keyword arguments:
+		instruction_type -- o tipo que a instrução deve estar(string, list, dictionary)
+		"""
+		if (instruction_type == "string"):
+			return self._instruction.get_str_instruction()
+		if(instruction_type == "list"):
+			return self._instruction.get_arr_instruction()
+		return self._instruction.get_dict_instruction()
+		
 
-    instructions_map = map(define_instructions, self.mem)
-    return list(instructions_map)
+	def get_instruction(self):
+		"""Retorna um objeto instrução que a posição do armazenamento
+		de controle se encontra"""
+		return self._instruction
 
-  def get_mem_of_str(self):
-    """Retorna uma lista de instruções em string"""
-    def define_str_instructions(elem):
-      return elem.get_str_instruction()
+	def _set_instruction(self, position):
+		"""Define a instrução para uma outra da memória do armazenamento de controle"""
+		self._instruction = Instruction(self._cs_bytes[position])
 
-    instruction_map = map(define_str_instructions, self.get_mem_of_instructions())
-    return list(instruction_map)
+	def next(self, next_address=""):
+		"""Vai para a próxima instrução e retorna True caso a operação seja
+		bem sucedida e False caso contrário"""
+		instruction = self.get_readable_instruction()
 
-  def get_mem_of_arr(self):
-    """Retorna uma lista de lista de instruções"""
-    def define_arr_instruction(elem):
-      return elem.get_arr_instruction()
-    
-    instruction_map = map(define_arr_instruction, self.get_mem_of_instructions())
-    return list(instruction_map)
+		if (next_address == ""):
+			self._cs_pos = convert_to_decimal(instruction["next_address"])
+			self._set_instruction(self._cs_pos)
+			return True
+		
+		if (type(next_address) == int):
+			self._cs_pos = next_address
+			self._set_instruction(self._cs_pos)
+			return True
 
-    
+		if (type(next_address) == str):
+			self._cs_pos = convert_to_decimal(next_address)
+			self._set_instruction(self._cs_pos)
+			return True
+
+		return False
+

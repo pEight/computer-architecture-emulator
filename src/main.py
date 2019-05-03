@@ -1,47 +1,66 @@
-# Arquivo principal
-# Responsável por chamar todas as outras funcoes e dar inicio ao programa
-
+# Importar implementações do python
 import sys
+import time
+import os
 
+# Importar classes de módulos do projeto
 from Reg import Reg
 from ULA import ULA
-
-from reader import get_file_content
-from binary import convert_to_decimal
 from control_storage import Control_Storage
 from instruction import Instruction
+from main_memory import Main_Memory
 
+# Importar funções de módulos do projeto
+from binary import convert_to_decimal
+
+"""Função responsável por chamar todas as outras funções e dar inicio ao programa"""
 def main():
-  # Caminho passado na linha de comando
+  # Recebe o nome do arquivo que deve ser carregado na memória principal
   file_path = sys.argv[1]
 
   # Variáveis de Registradores
   registers = Reg()
-    
+
   # Variáveis da ULA
   ula = ULA()
   Zero = True
   NonZero = False
 
-  # Variáveis de Memória
-  mem = None
-  mem_pos = 0
-  inst_part = None
+  # Variáveis de armazenamento de controle
+  cs = Control_Storage()
+  instruction = None
 
-  if (file_path):
-    bytes_inst = get_file_content(file_path)
-    cs = Control_Storage(bytes_inst['bytes'], bytes_inst['size'])
-    mem = cs.get_mem_of_instructions()
+  # Variáveis da Memória principal
+  memory = Main_Memory(512)
+  instruction = None
+
+  # Carrega arquivo na memória principal
+  if (memory.load_memory(file_path)):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("\t\t\t\tArquivo carregando na memória.")
+    time.sleep(1)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("\t\t\t\tArquivo carregando na memória..")
+    time.sleep(1)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("\t\t\t\tArquivo carregando na memória...")
+    time.sleep(1)
+    os.system('cls' if os.name == 'nt' else 'clear')
 
   while True:
     wait_for_clock()
 
     ####################################### PARTE 1: Decodificar #####################################
-    inst = mem[mem_pos]
-    inst_part = inst.get_inst_dict()
     
+
+      # Define a primeira instrução do microprograma a ser executada
+    instruction = cs.get_readable_instruction()
+    instruction_str_test = cs.get_readable_instruction("string")  # teste
+    print(f"Instrução: {instruction_str_test}")  # teste
+    print(f"Partes: {instruction}") # teste
+
     ####################################### PARTE 2: Barramentos #####################################
-    b = registers.get_register_b(inst_part['bus_b'])
+    b = registers.get_register_b(instruction['bus_b'])
 
     ####################################### PARTE 3: ULA #############################################
 
@@ -53,8 +72,10 @@ def main():
 
     ula.execute_instruction()
 
-    if(ula.is_zero()): Zero = True
-    if(not ula.is_zero()): Zero = False
+    if(ula.is_zero()):
+      Zero = True
+    if(not ula.is_zero()):
+      Zero = False
     NonZero = not Zero
 
     ####################################### PARTE 4: Registradores ####################################
@@ -63,13 +84,15 @@ def main():
     C = "000000100"
     for i in range(0, len(C)):
       registers.set_register(i, ula.get_result())
-        
+
     ####################################### PARTE 5: Memoria ##########################################
 
     ####################################### PARTE 6: Jumps ############################################
 
-		####################################### PARTE 7: NEXT ADDRESS #####################################
-    mem_pos	+= convert_to_decimal(inst_part['next_address'])
+    ####################################### PARTE 7: NEXT ADDRESS #####################################
+      # Vai para a próxima instrução
+    cs.next()
+
 
 def wait_for_clock():
   """ Entrada: Nada

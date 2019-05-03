@@ -69,7 +69,7 @@ class Instruction:
     """Retorna a parte da instrução correspondente ao próximo endereço"""
     return self.instruction_str[27:36]
 
-  def get_inst_dict(self):
+  def get_dict_instruction(self):
     """Retorna um Dictionary com barramento b, memória, barramento c,
     ULA e próximo endereço"""
     return {
