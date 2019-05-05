@@ -23,8 +23,6 @@ def main():
 
 	# Variáveis da ULA
 	ula = ULA()
-	Zero = True
-	NonZero = False
 
 	# Variáveis de armazenamento de controle
 	cs = Control_Storage()
@@ -36,6 +34,7 @@ def main():
 
 	# Carrega arquivo na memória principal
 	if (memory.load_memory(file_path)):
+		"""
 		os.system('cls' if os.name == 'nt' else 'clear')
 		print("\t\t\t\tArquivo carregando na memória.")
 		time.sleep(1)
@@ -46,6 +45,7 @@ def main():
 		print("\t\t\t\tArquivo carregando na memória...")
 		time.sleep(1)
 		os.system('cls' if os.name == 'nt' else 'clear')
+		"""
 
 	while True:
 		wait_for_clock()
@@ -60,13 +60,13 @@ def main():
 		print(f"Partes: {instruction}") # teste
 
 		####################################### PARTE 2: Barramentos #####################################
-		b = registers.get_register_for_bus_b(instruction.get_bus_b_bin())
+		b = registers.get_register_for_bus_b(instruction["bus_b"])
 
 		####################################### PARTE 3: ULA #############################################
 
 		ula.set_inputs(registers.get_register_by_name("h"), b)
 
-		InstULA = instruction.get_ula_bin()
+		InstULA = instruction["ula"]
 
 		ula.set_instruction(InstULA)
 
@@ -74,16 +74,16 @@ def main():
 
 		####################################### PARTE 4: Registradores ####################################
 
-		C = instruction.get_bus_c_bin()
+		C = instruction["bus_c"]
 		registers.set_register_by_inst(C, ula.get_result())
 		
 		####################################### PARTE 5: Memoria ##########################################
 		
 
 		####################################### PARTE 6: Jumps ############################################
-		NextAdress = instruction.get_next_address_bin()
+		NextAdress = convert_to_decimal(instruction["next_address"])
 
-		J = instruction.get_jam_bin()
+		J = instruction["jam"]
 
 		if(J[0] == '1'):
 			NextAdress = NextAdress | registers.get_register_by_name("mbr")
