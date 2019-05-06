@@ -35,20 +35,6 @@ def main():
 
 	# Carrega arquivo na memória principal
 	if (memory.load_memory(file_path)):
-<<<<<<< HEAD
-		"""
-		os.system('cls' if os.name == 'nt' else 'clear')
-		print("\t\t\t\tArquivo carregando na memória.")
-		time.sleep(1)
-		os.system('cls' if os.name == 'nt' else 'clear')
-		print("\t\t\t\tArquivo carregando na memória..")
-		time.sleep(1)
-		os.system('cls' if os.name == 'nt' else 'clear')
-		print("\t\t\t\tArquivo carregando na memória...")
-		time.sleep(1)
-		os.system('cls' if os.name == 'nt' else 'clear')
-		"""
-=======
 		print("Deu certo")
 		os.system('cls' if os.name == 'nt' else 'clear')
 		# print("\t\t\t\tArquivo carregando na memória.")
@@ -62,7 +48,6 @@ def main():
 		# os.system('cls' if os.name == 'nt' else 'clear')
 
 	print(f"Memória: {memory.get_memory_arr()}")
->>>>>>> c1e2ca59de3f37d0797b8400288e786346cada13
 
 	while True:
 		wait_for_clock()
@@ -80,10 +65,7 @@ def main():
 
 		####################################### PARTE 2: Barramentos #####################################
 		b = registers.get_register_for_bus_b(instruction["bus_b"])
-<<<<<<< HEAD
-=======
 		print(f"Registradores: {registers.dict}")
->>>>>>> c1e2ca59de3f37d0797b8400288e786346cada13
 
 		####################################### PARTE 3: ULA #############################################
 
