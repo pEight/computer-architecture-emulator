@@ -31,10 +31,10 @@ def convert_to_decimal(bin_value):
 	bin_value -- Uma string de 0s e 1s
 	"""
 	result = 0
-	i = 0
+	i = len(bin_value) - 1
 
 	for v in bin_value:
 		result += int(v)*(2**i)
-		i += 1
+		i -= 1
 
 	return result

@@ -51,7 +51,7 @@ class Reg:
 
 		for i in range(0, len(instruction_string)):
 		 if(instruction_string[i] == '1'):
-				self.dict[self.dict.keys()[index]] = value
+				self.dict[list(self.dict.keys())[i]] = value
 		
 
 	def get_register_for_bus_b(self, instruction_string):
@@ -64,8 +64,7 @@ class Reg:
 
 		#Talvez seja necessario inverter a string
 		#inv_reg = instruction_string[::-1]
-
-		intRegister = convert_to_decimal(inv_reg)
+		intRegister = convert_to_decimal(instruction_string)
 
 		reg_names_for_b = ["mdr", "pc", "mbr", "mbr", "sp", "lv", "cpp", "tos", "opc"]
 

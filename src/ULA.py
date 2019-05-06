@@ -15,8 +15,8 @@ class ULA:
 		instruction_str -- a string referente a parte de instrucao relativa a ula(string)
 		"""
 
-		self.shift = inst[:2]
-		self.inst = inst[2:]
+		self.shift = instruction_str[:2]
+		self.inst = instruction_str[2:]
 
 	def set_inputs(self, a, b):
 		"""Altera o valor dos campos a e b da ULA
@@ -45,7 +45,7 @@ class ULA:
 		# Os resultados relacionados a cada instrucao
 		results = [self.a, self.b, ~ self.a, ~ self.b, self.a + self.b, self.a + self.b + 1, self.a + 1, self.b + 1, self.b - self.a, self.b - 1, -1*self.a, self.a & self.b, self.a | self.b, 0, 1, -1]
 
-		if(instructions.index(self.inst) != -1):
+		if(self.inst in instructions):
 			# Se a instrucao passada utilizar a ULA
 			self.result = results[instructions.index(self.inst)]
 
