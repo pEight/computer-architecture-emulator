@@ -45,7 +45,7 @@ class ULA:
 		# Os resultados relacionados a cada instrucao
 		results = [self.a, self.b, ~ self.a, ~ self.b, self.a + self.b, self.a + self.b + 1, self.a + 1, self.b + 1, self.b - self.a, self.b - 1, -1*self.a, self.a & self.b, self.a | self.b, 0, 1, -1]
 
-		if(instructions.index(self.inst) != -1):
+		if(self.inst in instructions):
 			# Se a instrucao passada utilizar a ULA
 			self.result = results[instructions.index(self.inst)]
 

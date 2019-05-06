@@ -64,7 +64,6 @@ class Reg:
 
 		#Talvez seja necessario inverter a string
 		#inv_reg = instruction_string[::-1]
-
 		intRegister = convert_to_decimal(instruction_string)
 
 		reg_names_for_b = ["mdr", "pc", "mbr", "mbr", "sp", "lv", "cpp", "tos", "opc"]
