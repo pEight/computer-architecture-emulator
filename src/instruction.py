@@ -19,9 +19,9 @@ class Instruction:
 
     for byte in self.instruction_byte:
       bin_dict = convert_to_bin(byte)
-      instruction_str += bin_dict['bin_str']
+      instruction_str += bin_dict['bin_str'][::-1]
 
-    return instruction_str
+    return instruction_str[::-1]
 
   def get_str_instruction(self):
     """Retorna uma string representando uma instrução de 8 bytes em binário"""
@@ -47,27 +47,27 @@ class Instruction:
 
   def get_bus_b_bin(self):
     """Retorna a parte da instrução correspondente ao barramento B"""
-    return self.instruction_str[:4]
+    return self.instruction_str[60:]
 
   def get_memory_bin(self):
     """Retorna a parte da instrução correspondente a ação memória(write, read, fetch)"""
-    return self.instruction_str[4:7]
+    return self.instruction_str[57:60]
 
   def get_bus_c_bin(self):
     """Retorna a parte da instrução correspondente ao barramento C"""
-    return self.instruction_str[7:16]
+    return self.instruction_str[48:57]
 
   def get_ula_bin(self):
     """Retorna a parte da instrução correspondente a ULA"""
-    return self.instruction_str[16:24]
+    return self.instruction_str[40:48]
 
   def get_jam_bin(self):
     """Retorna a parte da instrução correspondente ao JAM(JMPC, JAMN, JAMZ)"""
-    return self.instruction_str[24:27]
+    return self.instruction_str[37:40]
 
   def get_next_address_bin(self):
     """Retorna a parte da instrução correspondente ao próximo endereço"""
-    return self.instruction_str[27:36]
+    return self.instruction_str[28:37]
 
   def get_dict_instruction(self):
     """Retorna um Dictionary com barramento b, memória, barramento c,

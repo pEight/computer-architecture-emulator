@@ -1,6 +1,6 @@
 from instruction import Instruction
 from reader import get_file_content
-from binary import convert_to_decimal
+from binary import convert_to_decimal, convert_to_bin
 
 """Uma classe que representa o Armazenamento de Controle de 512 bytes"""
 class Control_Storage:
@@ -59,4 +59,20 @@ class Control_Storage:
 			return True
 
 		return False
+
+cs = Control_Storage()
+
+pos119 = cs._cs_bytes[119]
+for i in pos119:
+	print(i)
+
+# pos120 = cs._cs_bytes[120]
+# pos121 = cs._cs_bytes[121]
+
+
+
+
+# print(f"120: {pos119}")
+# print(f"120: {pos120}")
+# print(f"120: {pos121}")
 

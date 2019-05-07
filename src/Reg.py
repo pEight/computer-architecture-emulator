@@ -71,7 +71,7 @@ class Reg:
 		reg_value = self.dict[reg_names_for_b[intRegister]]
 
 		#Retorna o valor de MBR com sinal
-		if(intRegister == 2 and reg_value & (0b10000000)):
+		if(intRegister == 2 and reg_value > 256):
 			reg_value = reg_value | (0b111111111111111111111111 << 8)
 
 		return reg_value

@@ -50,7 +50,8 @@ class Main_Memory:
 		if (file_content["size"] > self.get_memory_size()):
 			return False
 
-		return self.write_memory(file_content["bytes"], 1)
+		self.write_memory(file_content["bytes"][4:24], 0)
+		return self.write_memory(file_content["bytes"][24:], 1025)
 
 	def read_memory(self, position, lines=1):
 		"""Ler uma posição ou mais posição de memória.

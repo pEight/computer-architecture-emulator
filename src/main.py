@@ -29,7 +29,7 @@ def main():
 	instruction = None
 
 	# Variáveis da Memória principal
-	memory = Main_Memory(512)
+	memory = Main_Memory(100000)
 	instruction = None
 
 
@@ -46,8 +46,11 @@ def main():
 		# print("\t\t\t\tArquivo carregando na memória...")
 		# time.sleep(1)
 		# os.system('cls' if os.name == 'nt' else 'clear')
+	buceta = ""
+	for i in range(0, 4):
+		buceta += memory.get_memory_str()[i]
 
-	print(f"Memória: {memory.get_memory_arr()}")
+	print(buceta)
 
 	while True:
 		wait_for_clock()
@@ -88,19 +91,26 @@ def main():
 		if (m[0] == "1"):
 			m_address = registers.get_register_by_name("mar")
 			m_data = registers.get_register_by_name("mdr")
-			m_data = int.from_bytes(m_data, "little")
-			memory.write_memory(m_data, m_address*4)
+			print(memory.write_memory(m_data, m_address*4))
+			print(memory.get_memory_str()[m_address*4])
 	
 		if (m[1] == "1"):
 			m_address = registers.get_register_by_name("mar")
-			m_data = memory.read_memory(m_address*4, 4)["byte"]
-			m_data = int.from_bytes(m_data, "little")
+			m_data = memory.read_memory(m_address*4, 4)
+			print(m_data["byte"])
+			print(m_data["arr"])
+			print(convert_to_decimal(m_data["str"]))
+			# m_data = convert_to_decimal(m_data["str"])
+			m_data = int.from_bytes(m_data["byte"], "little")
+			# print(f"m_data: {type(m_data)}")
 			registers.set_register_by_name("mdr", m_data)
 
 		if (m[2] == "1"):
 			m_address = registers.get_register_by_name("pc")
-			m_data = memory.fetch(m_address)["byte"]
-			m_data = int.from_bytes(m_data, "little")
+			print(f"m_address: {m_address}")
+			m_data = memory.fetch(m_address)["str"]
+			m_data = convert_to_decimal(m_data)
+			# print(f"m_data: {type(m_data)}")
 			registers.set_register_by_name("mbr", m_data)
 
 		# print(memory.read_memory(256, 4))
@@ -126,6 +136,8 @@ def main():
 			NextAdress += 256
 		if(J[2] == '1' and ula.is_zero() and NextAdress < 256):
 			NextAdress += 256
+
+		print(f"NextAddress: {NextAdress}")
 
 		####################################### PARTE 7: NEXT ADDRESS #####################################
 		print(f"Registradores: {registers.dict}")
