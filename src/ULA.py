@@ -65,7 +65,43 @@ class ULA:
 
 		# Retorna o resultado
 		return self.result
-		
+
+
+
+	def get_instruction_translation(self):
+		"""Indica para um estudante de arquitetura de computadores qual operação será executada na ULA
+		"""
+
+		# Todas os comandos validos da ULA
+		instructions = ["011000", "010100", "011010", "101100", "111100", "111101", "111001", "110101", "111111", "110110", "111011", "001100", "011100", "010000", "110001", "110010"]
+
+		# A traducao de cada comando
+		result = ["A", "B", "¬A", "¬B", "A + B", "A + B + 1", "A + 1", "B + 1", "B - A", "B - 1", "-A", "A AND B", "A OR B", "0", "1", "-1"]
+
+		str_result = ""
+
+		if(self.inst in instructions):
+			# Se a instrucao passada for valida na ula
+			str_result +=  "\nOperação da ULA: " + result[instructions.index(self.inst)]
+
+		else:
+			# Caso de escape caso a ULA nao deva fazer nada
+			str_result += "\nA ULA não executa nenhuma operação"
+
+		# Indica se deslocamentos foram feitos
+		if(self.shift == "01"):
+			str_result += "\nA ULA realiza o deslocamento de 1 bit para a direita"
+
+		if(self.shift == "10"):
+			str_result += "\nA ULA realiza o deslocamento de 8 bits para a esquerda"
+
+		# Retorne a string que representa a traducao
+		return str_result
+
+
+
+
+
 	def is_zero(self):
 		"""Indica se o resultado obtido na ULA antes do deslocamento foi Zero ( 0 )
 		"""

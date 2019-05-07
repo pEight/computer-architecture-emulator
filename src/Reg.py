@@ -53,6 +53,21 @@ class Reg:
 		 if(instruction_string[i] == '1'):
 				self.dict[list(self.dict.keys())[i]] = value
 		
+	def get_registers_names_for_bus_c(self, instruction_string):
+		"""Mostra para um estudante de arquitetura de computadores quais registradores estão sendo
+		gravadas pela parte C do comando 
+		
+		Keyword arguments:
+		instruction_string -- a string que representa a parte C da instrucao (string)
+		"""
+
+		str_result = "\nRegistradores gravados pela ULA: "
+
+		for i in range(0, len(instruction_string)):
+		 if(instruction_string[i] == '1'):
+			 	str_result += (list(self.dict.keys())[i]+"     ").upper()
+		return str_result
+
 
 	def get_register_for_bus_b(self, instruction_string):
 		"""Retorna o valor que o barramento B recebera atraves da parte B 
@@ -75,3 +90,25 @@ class Reg:
 			reg_value = reg_value | (0b111111111111111111111111 << 8)
 
 		return reg_value
+
+	def get_register_name_for_bus_b(self, instruction_string):
+		"""Retorna o nome do registrador acessado pelo barramento B atraves da parte B 
+		da instrucao em forma de string
+		
+		Keyword arguments:
+		instruction_string -- a string que representa a parte B da instrucao (string)
+		"""
+
+		intRegister = convert_to_decimal(instruction_string)
+
+		reg_names_for_b = ["mdr", "pc", "signed mbr", "unsigned mbr", "sp", "lv", "cpp", "tos", "opc"]
+
+		return reg_names_for_b[intRegister].upper()
+
+
+	def print_registers(self):
+		k = list(self.dict.values())
+		arr_print = ["  H : ", "OPC : ", "TOS : ", "CPP : ", " LV : ", " SP : ", " PC : ", "MDR : ", "MAR : ", "MBR : "]
+
+		for i in range(0, len(arr_print)-1):
+			print(arr_print[i]+str(k[i]))

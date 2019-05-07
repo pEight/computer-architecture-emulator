@@ -32,25 +32,14 @@ def main():
 	memory = Main_Memory(100000)
 	instruction = None
 
+	print("\t\t\t\tArquivo carregando na memória")
 
 	# Carrega arquivo na memória principal
 	if (memory.load_memory(file_path)):
-		print("Deu certo")
 		os.system('cls' if os.name == 'nt' else 'clear')
-		# print("\t\t\t\tArquivo carregando na memória.")
-		# time.sleep(1)
-		# os.system('cls' if os.name == 'nt' else 'clear')
-		# print("\t\t\t\tArquivo carregando na memória..")
-		# time.sleep(1)
-		# os.system('cls' if os.name == 'nt' else 'clear')
-		# print("\t\t\t\tArquivo carregando na memória...")
-		# time.sleep(1)
-		# os.system('cls' if os.name == 'nt' else 'clear')
-	buceta = ""
-	for i in range(0, 4):
-		buceta += memory.get_memory_str()[i]
-
-	print(buceta)
+	else:
+		print("Memória não pode ser carregada!")
+		return
 
 	while True:
 		wait_for_clock()
@@ -60,16 +49,17 @@ def main():
 
 		# Define a primeira instrução do microprograma a ser executada
 		instruction = cs.get_readable_instruction()
-		instruction_str_test = cs.get_readable_instruction("string")  # teste
-		instruction_hex = cs.get_instruction().get_byte_instruction()
-		print(f"Instrução: {instruction_str_test}")  # teste
-		print(f"Instrução hex: {instruction_hex}")
-		print(f"Partes: {instruction}") # teste
 
 		####################################### PARTE 2: Barramentos #####################################
 		b = registers.get_register_for_bus_b(instruction["bus_b"])
-		print(f"Registradores: {registers.dict}")
 
+		###################################### PRINT #####################################################
+		print("-----------------------------------------------------------")
+		cs.get_instruction().print_instruction()
+		print("\nRegistrador B: "+registers.get_register_name_for_bus_b(instruction["bus_b"]))
+		print("\nNext Address Antes: "+str(convert_to_decimal(instruction["next_address"])))
+		print("\nREGISTRADORES ANTES:\n")
+		registers.print_registers()
 		####################################### PARTE 3: ULA #############################################
 
 		ula.set_inputs(registers.get_register_by_name("h"), b)
@@ -78,52 +68,34 @@ def main():
 
 		ula.set_instruction(InstULA)
 
+		print(ula.get_instruction_translation())
+
 		ula.execute_instruction()
 
 		####################################### PARTE 4: Registradores ####################################
 
 		C = instruction["bus_c"]
 		registers.set_register_by_inst(C, ula.get_result())
-		
+		print(registers.get_registers_names_for_bus_c(C))
 		####################################### PARTE 5: Memoria ##########################################
 		m = instruction["memory"]
 
 		if (m[0] == "1"):
 			m_address = registers.get_register_by_name("mar")
 			m_data = registers.get_register_by_name("mdr")
-			print(memory.write_memory(m_data, m_address*4))
-			print(memory.get_memory_str()[m_address*4])
+			memory.write_memory(m_data, m_address*4)
 	
 		if (m[1] == "1"):
 			m_address = registers.get_register_by_name("mar")
 			m_data = memory.read_memory(m_address*4, 4)
-			print(m_data["byte"])
-			print(m_data["arr"])
-			print(convert_to_decimal(m_data["str"]))
-			# m_data = convert_to_decimal(m_data["str"])
 			m_data = int.from_bytes(m_data["byte"], "little")
-			# print(f"m_data: {type(m_data)}")
 			registers.set_register_by_name("mdr", m_data)
 
 		if (m[2] == "1"):
 			m_address = registers.get_register_by_name("pc")
-			print(f"m_address: {m_address}")
 			m_data = memory.fetch(m_address)["str"]
 			m_data = convert_to_decimal(m_data)
-			# print(f"m_data: {type(m_data)}")
 			registers.set_register_by_name("mbr", m_data)
-
-		# print(memory.read_memory(256, 4))
-		# print(memory.write_memory(265, 256))
-		# print(memory.read_memory(256, 4))
-		# print(memory.fetch(256))
-		# print(memory.fetch(257))
-		# print(memory.read_memory(4, 4))
-		# print(memory.read_memory(8, 4))
-		# print(memory.read_memory(12, 4))
-		# print(memory.read_memory(16, 4))
-
-			
 
 		####################################### PARTE 6: Jumps ############################################
 		NextAdress = convert_to_decimal(instruction["next_address"])
@@ -137,13 +109,15 @@ def main():
 		if(J[2] == '1' and ula.is_zero() and NextAdress < 256):
 			NextAdress += 256
 
-		print(f"NextAddress: {NextAdress}")
-
-		####################################### PARTE 7: NEXT ADDRESS #####################################
-		print(f"Registradores: {registers.dict}")
+		####################################### PAtRTE 7: NEXT ADDRESS #####################################
+		# registers.print_registers()
 		# Vai para a próxima instrução
 		cs.next(NextAdress)
 
+		print("\nREGISTRADORES DEPOIS:\n")
+		registers.print_registers()
+		print("\nNext Address Depois: "+str(NextAdress)+"\n")
+		print("-----------------------------------------------------------")
 
 def wait_for_clock():
 	""" Entrada: Nada
