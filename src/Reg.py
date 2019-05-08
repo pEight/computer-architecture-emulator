@@ -107,8 +107,10 @@ class Reg:
 
 
 	def print_registers(self):
+		"""Imprime na tela os valores de todos os registradores seguidos de seus nomes
+		"""
 		k = list(self.dict.values())
 		arr_print = ["  H : ", "OPC : ", "TOS : ", "CPP : ", " LV : ", " SP : ", " PC : ", "MDR : ", "MAR : ", "MBR : "]
 
-		for i in range(0, len(arr_print)-1):
+		for i in range(0, len(arr_print)):
 			print(arr_print[i]+str(k[i]))

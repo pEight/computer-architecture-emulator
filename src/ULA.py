@@ -5,6 +5,7 @@ class ULA:
 		self.a = 0
 		self.b = 0
 		self.inst = 0
+		self.shift = 0
 		self.result = 0
 		self.zero = True
 

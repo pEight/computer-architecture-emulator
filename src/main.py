@@ -18,17 +18,17 @@ def main():
 	# Recebe o nome do arquivo que deve ser carregado na memória principal
 	file_path = sys.argv[1]
 
-	# Variáveis de Registradores
+	# Objeto de Registradores
 	registers = Reg()
 
-	# Variáveis da ULA
+	# Objeto da ULA
 	ula = ULA()
 
-	# Variáveis de armazenamento de controle
+	# Objeto de armazenamento de controle
 	cs = Control_Storage()
 	instruction = None
 
-	# Variáveis da Memória principal
+	# Objeto da Memória principal
 	memory = Main_Memory(100000)
 	instruction = None
 
@@ -62,10 +62,12 @@ def main():
 		registers.print_registers()
 		####################################### PARTE 3: ULA #############################################
 
+		#Atribui os barramentos A e B da ULA
 		ula.set_inputs(registers.get_register_by_name("h"), b)
 
 		InstULA = instruction["ula"]
 
+		# Atribui e executa a instrucao da ULA
 		ula.set_instruction(InstULA)
 
 		print(ula.get_instruction_translation())
@@ -75,22 +77,28 @@ def main():
 		####################################### PARTE 4: Registradores ####################################
 
 		C = instruction["bus_c"]
+		#Grava o resultado da ULA nos registradores especificados pela parte C da micro instrucao
 		registers.set_register_by_inst(C, ula.get_result())
+
 		print(registers.get_registers_names_for_bus_c(C))
+		
 		####################################### PARTE 5: Memoria ##########################################
 		m = instruction["memory"]
 
+		#Realiza o Write na posicao MAR com o valor MDR
 		if (m[0] == "1"):
 			m_address = registers.get_register_by_name("mar")
 			m_data = registers.get_register_by_name("mdr")
 			memory.write_memory(m_data, m_address*4)
 	
+		#Realiza o Read na posicao MAR e grava em MDR
 		if (m[1] == "1"):
 			m_address = registers.get_register_by_name("mar")
 			m_data = memory.read_memory(m_address*4, 4)
 			m_data = int.from_bytes(m_data["byte"], "little")
 			registers.set_register_by_name("mdr", m_data)
 
+		#Realiza o Fetch na posicao PC e grava na em MBR
 		if (m[2] == "1"):
 			m_address = registers.get_register_by_name("pc")
 			m_data = memory.fetch(m_address)["str"]
@@ -102,15 +110,17 @@ def main():
 
 		J = instruction["jam"]
 
+		#Realiza o JMPC realizando o OU bit a bit de MBR com NextAdress
 		if(J[0] == '1'):
 			NextAdress = NextAdress | registers.get_register_by_name("mbr")
+		#JAMN e JAMZ abaixo, realizando o OU do nono bit do NextAdress (2^8 = 256) com o valor do bit que indica
+		#se a ULA for zero(JAMZ) ou com a negacao desse bit(JAMN)
 		if(J[1] == '1' and (not ula.is_zero()) and NextAdress < 256):
 			NextAdress += 256
 		if(J[2] == '1' and ula.is_zero() and NextAdress < 256):
 			NextAdress += 256
 
-		####################################### PAtRTE 7: NEXT ADDRESS #####################################
-		# registers.print_registers()
+		####################################### PARTE 7: NEXT ADDRESS #####################################
 		# Vai para a próxima instrução
 		cs.next(NextAdress)
 

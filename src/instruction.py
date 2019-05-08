@@ -82,6 +82,9 @@ class Instruction:
 		}
 
 	def print_instruction(self):
+		"""Imprime a instrucao dividida em partes para que um estudante de arquitetura de computadores
+		possa compreender
+		"""
 		dict = self.get_dict_instruction()
 		v = list(dict.values())
 

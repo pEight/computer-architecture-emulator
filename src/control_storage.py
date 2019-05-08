@@ -12,7 +12,10 @@ class Control_Storage:
 		self._cs_bytes = [
 			file_content["bytes"][i:i+8] for i in range(0, file_content["size"], 8)
 		]
+
+		# Indica a posicao atual sendo lida no armazenamento de controle
 		self._cs_pos = 0
+		# Indica qual instrucao esta situada na posicao atual
 		self._instruction = Instruction(self._cs_bytes[self._cs_pos])
 
 	def get_readable_instruction(self, instruction_type="dictionary"):
@@ -43,11 +46,13 @@ class Control_Storage:
 		bem sucedida e False caso contrário"""
 		instruction = self.get_readable_instruction()
 
+		# Caso nao foi passado nenhum valor como next_address, o proximo endereco especificado na instrucao e passado
 		if (next_address == ""):
 			self._cs_pos = convert_to_decimal(instruction["next_address"])
 			self._set_instruction(self._cs_pos)
 			return True
 		
+		# Caso seja passado um valor como parametro de next address, este valor e convertido para inteiro
 		if (type(next_address) == int):
 			self._cs_pos = next_address
 			self._set_instruction(self._cs_pos)
@@ -59,20 +64,3 @@ class Control_Storage:
 			return True
 
 		return False
-
-cs = Control_Storage()
-
-pos119 = cs._cs_bytes[119]
-for i in pos119:
-	print(i)
-
-# pos120 = cs._cs_bytes[120]
-# pos121 = cs._cs_bytes[121]
-
-
-
-
-# print(f"120: {pos119}")
-# print(f"120: {pos120}")
-# print(f"120: {pos121}")
-

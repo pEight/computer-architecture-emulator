@@ -12,26 +12,28 @@ class Main_Memory:
 		"""
 		self._memory = [b"\x00"]*size
 
+	"""Retorna o tamanho da memoria
+	"""
 	def get_memory_size(self): return len(self._memory)
 
-	# Criado para teste. Remover depois	
+	# Criado para teste.
 	def get_memory(self): return self._memory
 
-	# Criado para teste. Remover depois		
+	# Criado para teste.		
 	def get_memory_int(self):
 		mem = self._memory
 		return list(
 			map(lambda elem: int.from_bytes(elem, "little"), mem)
 		)
 	
-	# Criado para teste. Remover depois	
+	# Criado para teste.	
 	def get_memory_str(self):
 		int_list = self.get_memory_int()
 		return list(
 			map(lambda elem: convert_to_bin(elem)["bin_str"], int_list)
 		)
 
-	# Criado para teste. Remover depois	
+	# Criado para teste.	
 	def get_memory_arr(self):
 		int_list = self.get_memory_int()
 		return list(
@@ -47,10 +49,13 @@ class Main_Memory:
 		"""
 		file_content = get_file_content(file_path)
 
+		#Verifica se o conteudo e grande demais para a memoria
 		if (file_content["size"] > self.get_memory_size()):
 			return False
 
+		#Escreve os 20 bytes de inicializacao a partir da posicao 0
 		self.write_memory(file_content["bytes"][4:24], 0)
+		#Escreve o restante do programa a partir da posicao 1025
 		return self.write_memory(file_content["bytes"][24:], 1025)
 
 	def read_memory(self, position, lines=1):
@@ -61,10 +66,13 @@ class Main_Memory:
 		position -- Posição inicial de memória a ser lida
 		lines -- Número de posições a ser lida a partir de position
 		"""
+		#Verifica se esta tentando ler mais do que existe na memoria
 		if (position >= self.get_memory_size()):
 			return None
 
+		#Indicara a posicao a ser lida
 		pos = None
+		#Converte a posicao para inteiro
 		if (type(position) == str):
 			pos = convert_to_decimal(position)
 		elif (type(position) == bytes):
@@ -72,20 +80,26 @@ class Main_Memory:
 		else:
 			pos = position
 
+		#Resultado da leitura em bytes
 		result_byte = b""
+
+		#Adiciona byte a byte os resultados
 		for i in range(0, lines):
 			result_byte += self._memory[pos+i]
 
+		#Prepara resultado para ser mostrado em string
 		result_str = ''
 		for i in range(0, lines):
 			int_value = int.from_bytes(self._memory[pos+i], "little")
 			result_str += convert_to_bin(int_value)["bin_str"]
 
+		#Prepara resultado para ser mostrado em listas
 		result_arr = []
 		for i in range(0, lines):
 			int_value = int.from_bytes(self._memory[pos+i], "little")
 			result_arr += convert_to_bin(int_value)["bin_arr"]
 
+		#Retorna o dicionario da leitura de 3 formas diferentes
 		return {
 			"byte": result_byte,
 			"str": result_str,
@@ -100,7 +114,9 @@ class Main_Memory:
 		value -- Valor a ser escrito na memória
 		position -- Posição de memória que value será escrito
 		"""
+		#Indicara a posicao a ser lida
 		pos = None
+		#Converte a posicao para inteiro
 		if(type(position) == str):
 			pos = convert_to_decimal(position)
 		elif(type(position) == bytes):
@@ -108,7 +124,9 @@ class Main_Memory:
 		else:
 			pos = position
 
+		#Valor a ser escrito na memoria
 		result = None
+		#Coverte o resultado para bytes
 		if (type(value) == str):
 			result = convert_to_decimal(value)
 		elif (type(value) == bytes):
@@ -118,9 +136,11 @@ class Main_Memory:
 		
 		result_size = len(result)
 
+		#Verifica se estamos tentando escrever mais do que a memoria suporta
 		if (pos+result_size >= self.get_memory_size()):
 			return False
 
+		#Escrete os bytes na memoria
 		for i in range(0, result_size):
 			self._memory[pos+i] = result[i].to_bytes(1, "little")
 
@@ -133,5 +153,6 @@ class Main_Memory:
 		Keyword arguments:
 		position -- Posição a ser procurada
 		"""
+		#Faz uma leitura de apenas 1 byte na posicao espeficicada
 		return self.read_memory(position)
 

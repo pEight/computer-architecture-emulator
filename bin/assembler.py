@@ -1,219 +1,168 @@
-# -*- coding: utf-8 -*-
 import sys
+import struct
 
-#dicionario das instruções com seus respectivos codigos hexadecimais e operando(s)
-dic_instrucoes = {
-    'nop':           [0x01, []], 'iadd':          [0x02, []], 'isub':          [0x05, []], 'iand':          [0x08, []],
-    'ior':           [0x0b, []], 'dup':           [0x0e, []], 'pop':           [0x10, []], 'swap':          [0x13, []],
-   
-    'bipush':        [0x19, ['byte']],            'iload':         [0x1c, ['varnum']],     'istore':        [0x22, ['new_varnum']],
-    'wide':          [0x28, []],                  'ldc_w':         [0x32, ['index']],      'iinc':          [0x36, ['varnum', 'const']],
-    'goto':          [0x3c, ['offset']],          'iflt':          [0x43, ['offset']],     'ifeq':          [0x47, ['offset']],
-    'if_icmpeq':     [0x4b, ['offset']],          'invokevirtual': [0x55, ['disp']],       'ireturn':       [0x6b, []]
+commands = {
+    'nop': 0x01, 
+    'iadd': 0x02, 
+    'isub': 0x05, 
+    'iand': 0x08, 
+    'ior': 0x0B,
+    'dup': 0x0E,
+    'pop': 0x10,
+    'swap': 0x13,
+    'bipush': 0x19,
+    'iload': 0x1C, 
+    'istore': 0x22,
+    'wide': 0x28,
+    'ldc_w': 0x32,
+    'iinc': 0x36,
+    'goto': 0x3C, 
+    'iflt': 0x43,
+    'ifeq': 0x47,
+    'if_icmpeq': 0x4B,
+    'invokevirtual': 0x55,
+    'ireturn': 0x6B
 }
 
-dic_labels = {}    # dicionario para armazenar as labels e os respectivos endereços
-dic_variaveis = {} # dicionario para armazenar as variáveis e os respectivos endereços
-lista_bytes = []   # lista que armazena os endereços das labels, variaveis, instruções e operandos
-tela_erro = ""     
+
+def colorize(msg, color):
+  final_msg = ''
+  if color == 'RED':
+    final_msg += '\033[0;37;41m %s \033[0m' % msg
+  elif color == 'GREEN':
+    final_msg += '\033[0;37;42m %s \033[0m' % msg
+  return final_msg
 
 
-contador_linha = 0 
-contador_byte = 0  
+def syntax_check(program):
+  hinted_code = ''
+  i = 0
+  syntax_ok = True
+  for line in program:
+    i += 1
+    if len(line) == 1:
+      if line[0] not in commands:
+        syntax_ok = False
+        hinted_code += '{} Linha {}: comando inválido\n   {}\n'.format(colorize('ERRO', 'RED'), i, *line)
+    if len(line) == 2:
+      if line[0] not in commands:
+        syntax_ok = False
+        hinted_code += '{} Linha {}: comando inválido\n   {} {}\n'.format(colorize('ERRO', 'RED'), i, *line)
+    elif len(line) == 3:
+      if line[1] not in commands:
+        syntax_ok = False
+        hinted_code += '{} Linha {}: comando inválido\n{} {} {}\n'.format(colorize('ERRO', 'RED'), i, *line)
+  print(hinted_code)
+  return syntax_ok
 
-proxima_variavel = 0 
 
-# funções
-def add_erro(tipo_erro, linha_erro):        # adiciona mensagem de erro e mostra a linha que contem o erro  
-    global contador_linha, tela_erro
+def init(byte_array, num_of_vars):
+  regs = [
+    0x7300, # INIT
+    0x0006, # CPP
+    0x1001, # LV
+    0x0400, # PC
+    0x1001 + num_of_vars # SP
+  ]
 
-    tela_erro += ("Há um erro na linha " + str(linha_erro) + ": " + tipo_erro + "\n")
-    return tela_erro
+  for reg in regs:
+    # '<' Little-endian; 'I' unsigned int
+    reg = struct.pack('<I', reg)
+    for reg_byte in reg:
+      byte_array.append(reg_byte)
 
-def checar_comentario(string):              # checa se a linha é um comentário
-    try:
-        return string.startswith("//")
-    except TypeError:
-        raise TypeError
 
-def checar_label(string):                   # checa se um elemento é uma label
-    global contador_linha, dic_variaveis, dic_instrucoes
+def write_output(byte_list):
+  # Converte o array de bytes em bytes
+  final_bytes = bytes(byte_list)
 
-    if string in dic_variaveis.keys():
-        add_erro("Label com mesmo nome de uma variável", contador_linha)
-        return False
+  # Escreve o arquivo final
+  filename = sys.argv[1].split('.')[0] + '.exe'
+  with open(filename, 'wb') as binary_output:
+    # Write text or bytes to the file
+    bytes_written = binary_output.write(final_bytes)
+    print(colorize(filename, 'GREEN'))
+    print('Foram escritos %d bytes.' % bytes_written)
+
+
+def assemble(program):
+  labels = {}
+  byte_counter = 0
+  # Cast bytes to bytearray
+  byte_list = bytearray()
+  vars = []
+
+  # Identifica as labels
+  for line in program:
+    # Encontra cada label no programa
+    if len(line) > 2 and line[0] not in commands:
+      labels[line[0]] = 0
+    byte_counter += len(line)
+
+  # '<' Little-endian; 'I' unsigned int
+  Q = struct.pack('<I', 20 + byte_counter)
+  for b in Q:
+    byte_list.append(b)
+
+  byte_counter = 0
+
+  # Contador de vars e cálculo da distância de labels
+  for line in program:
+    # Primeiro caso: linha possui operador e operando, sendo o último uma var ou um int
+    if len(line) == 2 and line[1] not in labels:
+      if not line[1].isnumeric() and line[1] not in vars:
+        vars.append(line[1])
+      byte_counter += len(line)
+    # Segundo caso: linha possui operador e label
+    elif len(line) == 2 and line[1] in labels:
+      labels[line[1]] = byte_counter + 1
+      byte_counter += len(line) + 1
+    # Terceiro caso: linha possui label, operador e operando
+    elif len(line) == 3 and line[0] in labels:
+      # Cálculo da distância entre labels
+      labels[line[0]] = byte_counter + 1 - labels[line[0]]
+      del line[0]
+      byte_counter += len(line)
     else:
-        return string not in dic_instrucoes.keys() and string.replace("_", "").isalnum()
+      byte_counter += len(line)
 
-def add_label(label):                        # sendo uma label, é adicionada ao dicionário de labels
-    global contador_byte, dic_labels
+  # 20 bytes de inicialização
+  init(byte_list, len(vars))
 
-    dic_labels[label] = contador_byte + 1
+  for line in program:
+    mic_fix = ['goto', 'if_icmpeq', 'iflt', 'ifeq']
+    # Adiciona o comando a lista de bytes
+    byte_list.append(commands[line[0]])
 
-def checar_variavel_valida(string):          # checa se um elemento é uma variavel válida
-    global dic_labels, contador_linha
+    if len(line) > 1:
+      if line[1] in vars:
+        # Adiciona a variavel a lista de bytes
+        byte_list.append(vars.index(line[1]))
+      elif line[1].isnumeric():
+        # Adiciona o valor a lista de bytes
+        byte_list.append(int(line[1]))
+      elif line[1] in labels:
+          label = labels[line[1]]
+          # Checa se é necessário fazer fix de little-endian
+          if line[0] in mic_fix:
+            # '>' Big-endian 'H' unsigned short
+            label = struct.pack('>H', label)
+          else:
+            # '<' Little-endian 'H' unsigned short
+            label = struct.pack('<H', label)
+          # Adiciona ambos os bytes da label
+          for b in label:
+            byte_list.append(b)
+  write_output(byte_list)
 
-    if string in dic_labels.keys():
-        add_erro("Variável com mesmo nome de uma label", contador_linha)
-        return False
-    else:
-        return string[0].isalpha() and string.replace("_","").isalnum()
-
-def checar_instrucao_valida(instrucao):       # checa se a instrução está no dicionario de instruções, definido no inicio
-    global dic_instrucoes
-
-    return instrucao in dic_instrucoes.keys()
-
-def add_instrucao(instrucao):                  # endereço de memoria da instrução é adicionada à lista de bytes
-    global contador_byte,  dic_instrucoes
-
-    lista_bytes.append(dic_instrucoes[instrucao][0])
-    contador_byte += 1
-
-def checar_operando_valido(instrucao, operando, tipo_operando, numero_operandos):             # checa se o operando da instrução é válido
-    global dic_variaveis
-    
-    if numero_operandos == len(operando):
-        if numero_operandos == 0:
-            return True
-        
-        flag = True
-        
-        for i in range (0, numero_operandos, 1):
-            if tipo_operando[i] == "varnum":
-                if operando[i] not in dic_variaveis:
-                    flag = False
-            
-            elif tipo_operando[i] == "new_varnum":
-                if not checar_variavel_valida(operando[i]):
-                    flag = False
-            
-            elif tipo_operando[i] ==  "byte" or tipo_operando[i] == "const" or tipo_operando[i] == "index" or tipo_operando[i] == "disp":
-                if not operando[i].isnumeric():
-                    flag = False
-
-            else:
-                if not checar_label(operando[i]):
-                    flag = False
-
-        return flag
-    else: 
-        return False
-
-def add_operando(instrucao,operando, tipo_operando, numero_operandos):              # o endereço do operando é adicionado à lista de bytes e
-    global dic_variaveis, contador_byte, proxima_variavel                           # dependendo do tipo do operando, é incrementado 1 ou 2 bytes ao contador de bytes
-
-    for i in range(0, numero_operandos, 1):
-        if tipo_operando[i] == "varnum":
-            lista_bytes.append(dic_variaveis[operando[i]])
-            contador_byte += 1
-
-        elif tipo_operando[i] == "new_varnum":
-            if operando[i] not in dic_variaveis.keys():
-                dic_variaveis[operando[i]] = proxima_variavel
-                proxima_variavel += 1
-                        
-            lista_bytes.append(dic_variaveis[operando[i]])
-            contador_byte += 1
-            
-        elif tipo_operando[i] ==  "byte" or tipo_operando[i] == "const":
-            lista_bytes.append(int(operando[i]))
-            contador_byte += 1            
-
-        elif tipo_operando[i] == "disp" or tipo_operando[i] == "index": 
-            lista_bytes.append(int(operando[i]) & 0xff)
-            lista_bytes.append(int(operando[i]) >> 8)
-            contador_byte += 2
-        else:
-            lista_bytes.append([operando[i], contador_byte])
-            contador_byte += 2
-
-def gerar_executavel():                             # criando o arquivo executável
-    global lista_bytes, contador_linha, contador_byte
-
-    bytes_para_gravacao = bytearray()               # array de bytes que será escrita no arquivo
-    
-    tamanho_arquivo = (contador_byte + 20).to_bytes(4, "little", signed = True)     # arquivo deve iniciar com 4 bytes indicando o tamanho do programa
-    
-    bytes_para_gravacao += tamanho_arquivo 
-
-    bytes_inicializacao = [0x7300, 0x0006, 0x1001, 0x0400, 0x1001 + len(dic_variaveis.keys())]      # bytes pré-definidos de inicialização 
-    
-    try:
-        for byte in bytes_inicializacao:
-            bytes_para_gravacao += byte.to_bytes(4, "little", signed = True)         # adicionando os bytes de inicialização
-
-        for byte in lista_bytes:                          
-            if type(byte) == list:                                                   # checa se o operando é do tipo offset
-                if byte[0] not in dic_labels.keys():
-                    add_erro("Label não encontrada", contador_linha)                 # erro se a label não existe  
-                else:
-                    byte_label = dic_labels[byte[0]] - byte[1]                       # deve-se pegar a distância entre o endereço da label e da instrução em que a label é operando
-                    bytes_para_gravacao += byte_label.to_bytes(2, "big", signed = True)   # a distância é adicionada
-            else:
-                bytes_para_gravacao.append(byte)                                     # se não é label, é adicionado à array 
-    except Exception:
-        print("Erro ao gerar o arquivo")
-        print(tela_erro)
-
-    arquivo_executavel = open(sys.argv[1][:-4] + ".exe", 'wb')
-    arquivo_executavel.write(bytes_para_gravacao)
-    arquivo_executavel.close()
 
 def main():
-    global contador_linha
+  program = []
 
-    try:                                                         # tenta abrir o arquivo
-        arq_asm = open(sys.argv[1], 'r')
-    except IndexError:                                           # não é passado parametro para leitura
-        print("Não há arquivo para abrir")
-        raise IndexError
-    except IOError:                                              # o arquivo passado não existe 
-        print("Não é possível abrir o arquivo")
-        raise IOError
+  with open(sys.argv[1], 'r') as program:
+    program = [line.split() for line in program]
 
-    for linha in arq_asm:
-        contador_linha += 1
+  if syntax_check(program):
+    assemble(program)
 
-        linha_lista = linha.lower().split()                       # não é case sensitive
-        
-        try:                                                       
-            if checar_label(linha_lista[0]):                      # vai checar se a linha possui label
-                add_label(linha_lista[0])                         # se possuir, label é adicionada ao seu dicionario
-                del linha_lista[0]
-        except IndexError:                                        # caso a linha não possua label, passar-se-á para a próxima
-            pass
-
-        if linha_lista != [] and not checar_comentario(linha_lista[0]):
-            instrucao = linha_lista[0]
-            
-            # a partir daqui, cada instrução é checada e, sendo válida, faz-se a checagem do(s) operando(s)
-            if checar_instrucao_valida(instrucao):
-                tipo_operando = dic_instrucoes[instrucao][1]
-                numero_operandos = len(tipo_operando)
-                operando = linha_lista[1 : numero_operandos + 1]
-
-                if checar_operando_valido(instrucao, operando, tipo_operando, numero_operandos):
-                    add_instrucao(instrucao)
-                    add_operando(instrucao, operando, tipo_operando, numero_operandos)
-
-                else:
-                    add_erro("Operando inválido", contador_linha)
-            
-            else:
-                add_erro("Instrução inválida", contador_linha)
-
-    arq_asm.close()  
-
-    if tela_erro == "":
-        gerar_executavel()
-    
-    else:
-        print(tela_erro)
-            
-if __name__ == '__main__':                      # looping
-    main()   
- 
-
-
-
+main()
