@@ -113,4 +113,4 @@ class Reg:
 		arr_print = ["  H : ", "OPC : ", "TOS : ", "CPP : ", " LV : ", " SP : ", " PC : ", "MDR : ", "MAR : ", "MBR : "]
 
 		for i in range(0, len(arr_print)):
-			print(arr_print[i]+str(k[i]))
+			print(arr_print[i]+str(hex(k[i]))+" | "+str(k[i]))
